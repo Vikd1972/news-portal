@@ -9,25 +9,41 @@ export enum StatusENUM {
 }
 
 export interface IUserType {
-  id: number;
   fullname: string;
   email: string;
   photoFilePath: string;
   status: StatusENUM;
 }
 
+export interface INewsType {
+  author: IUserType;
+  title: string;
+  dateOfPublish: Date;
+  content: string;
+}
+
+const user: IUserType = {
+  fullname: 'Иван Иванов',
+  email: 'ivan@examle.com',
+  photoFilePath: '',
+  status: StatusENUM.user,
+};
+
+const news: INewsType = {
+  author: user,
+  title: '',
+  dateOfPublish: new Date(),
+  content: '',
+};
+
 const initialState: INewsPortalState = {
-  user: {
-    id: 0,
-    fullname: '',
-    email: '',
-    photoFilePath: '',
-    status: StatusENUM.user,
-  },
+  user,
+  news: [news],
 };
 
 interface INewsPortalState {
   user: IUserType;
+  news: INewsType[];
 }
 
 export const newsPortalSlice = createSlice({
@@ -36,6 +52,9 @@ export const newsPortalSlice = createSlice({
   reducers: {
     setUser: (state, action: PayloadAction<IUserType>) => {
       state.user = action.payload;
+    },
+    setNews: (state, action: PayloadAction<INewsType[]>) => {
+      state.news = action.payload;
     },
   },
 });
