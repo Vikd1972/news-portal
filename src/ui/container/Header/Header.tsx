@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
-import getDate from '../../../utils/getDate';
+import Button from '@mui/material/Button';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import HeaderWrapper from './Header.styles';
 
+import getDate from '../../../utils/getDate';
 import { useAppSelector } from '../../../store/hooks';
 
 export const Header: React.FC = () => {
@@ -22,15 +26,38 @@ export const Header: React.FC = () => {
 
   return (
     <HeaderWrapper>
-      <h4 className="title">NEWS PORTAL</h4>
+      <div className="title-portal">NEWS PORTAL</div>
       <div className="date-box">
         <p className="text">It&apos;s now {today?.date}</p>
         <p className="text">{today?.time}</p>
       </div>
-      <div className="user-data">
-        <p className="text">{user?.fullname}</p>
-        <p className="text">{user?.email}</p>
-      </div>
+      {true
+        ? (
+          <nav className="panel__buttons">
+          {/* {quantityNewComment ? <div className="counter">{quantityNewComment}</div> : null} */}
+
+            <Link
+              className="button__icon"
+              to="/profile"
+            >
+              <AccountCircleIcon
+                className="user-icon"
+                fontSize="large"
+              />
+            </Link>
+          </nav>
+        ) : (
+          <div>
+            <form action="/login">
+              <Button
+                className="button"
+                variant="outlined"
+              >
+                Sign In
+              </Button>
+            </form>
+          </div>
+        )}
     </HeaderWrapper>
   );
 };

@@ -4,46 +4,47 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 
 export enum StatusENUM {
   user = 'user',
-  author = 'author',
   admin = 'admin',
 }
 
 export interface IUserType {
-  fullname: string;
+  firstName: string;
+  lastName: string;
   email: string;
   photoFilePath: string;
-  status: StatusENUM;
 }
 
 export interface INewsType {
-  author: IUserType;
+  newsId: number;
   title: string;
-  dateOfPublish: Date;
   content: string;
+  dateOfPublish: Date;
+  user: IUserType;
+  topics: ITopic[];
+}
+
+export interface ITopic {
+  topicId: number;
+  topic: string;
 }
 
 const user: IUserType = {
-  fullname: 'Иван Иванов',
+  firstName: 'Иван',
+  lastName: 'Иванов',
   email: 'ivan@examle.com',
   photoFilePath: '',
-  status: StatusENUM.user,
-};
-
-const news: INewsType = {
-  author: user,
-  title: '',
-  dateOfPublish: new Date(),
-  content: '',
 };
 
 const initialState: INewsPortalState = {
+  topics: null,
   user,
-  news: [news],
+  news: null,
 };
 
 interface INewsPortalState {
-  user: IUserType;
-  news: INewsType[];
+  topics: ITopic[] | null;
+  user: IUserType | null;
+  news: INewsType[] | null;
 }
 
 export const newsPortalSlice = createSlice({
@@ -56,11 +57,16 @@ export const newsPortalSlice = createSlice({
     setNews: (state, action: PayloadAction<INewsType[]>) => {
       state.news = action.payload;
     },
+    setTopics: (state, action: PayloadAction<ITopic[]>) => {
+      state.topics = action.payload;
+    },
   },
 });
 
 export const {
   setUser,
+  setNews,
+  setTopics,
 } = newsPortalSlice.actions;
 
 export default newsPortalSlice.reducer;

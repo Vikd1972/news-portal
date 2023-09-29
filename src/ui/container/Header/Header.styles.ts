@@ -5,10 +5,14 @@ const HeaderStyles = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
-
-  .title {
-    padding: 0 10px;
+  width: -webkit-fill-available;
+  padding: 10px;
+  
+  .title-portal {
+    font-weight: 700;
+    border: 1px solid ${({ theme }) => theme.color};
+    border-radius: ${({ theme }) => theme.borderRadius};
+    padding: 10px 10px;
   }
 
   .text {
@@ -20,11 +24,25 @@ const HeaderStyles = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    p {
+      padding: 0;
+      margin: 0;
+    }
   }
 
   .user-data {
     padding: 0 10px;
     font-weight: 700;
+  }
+
+  .user-icon {
+    color: ${({ theme }) => theme.color};
+    border-color: transparent;
+  }
+
+  .button {
+    color: ${({ theme }) => theme.color};
+    border-color: ${({ theme }) => theme.color};
   }
 `;
 

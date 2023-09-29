@@ -1,7 +1,9 @@
 import styled from 'styled-components';
 
 const AppContainer = styled.div`
-  margin: 0 auto;display: flex;
+  margin: 0 auto;
+  display: flex;
+  width: 100%;
   flex-direction: column;
   align-items: center;
   font-family: 'Poppins', sans-serif;
