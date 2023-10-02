@@ -62,6 +62,7 @@
     ]
   },
   "devDependencies": {
+    "@types/react-datepicker": "^4.15.1",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-no-inline-styles": "^1.0.5",
     "eslint-plugin-styled-components-config": "^0.0.2"

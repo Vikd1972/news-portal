@@ -1,4 +1,3 @@
-import type { AxiosRequestHeaders, InternalAxiosRequestConfig } from 'axios';
 import axios from 'axios';
 
 import config from '../config';
@@ -9,7 +8,7 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('authToken');
     if (token) {
       // eslint-disable-next-line no-param-reassign
       config.headers.Authorization = `Bearer ${token}`;

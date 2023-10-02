@@ -18,7 +18,7 @@ export interface INewsType {
   newsId: number;
   title: string;
   content: string;
-  dateOfPublish: Date;
+  dateOfPublication: Date;
   user: IUserType;
   topics: ITopic[];
 }
@@ -28,16 +28,9 @@ export interface ITopic {
   topic: string;
 }
 
-const user: IUserType = {
-  firstName: 'Иван',
-  lastName: 'Иванов',
-  email: 'ivan@examle.com',
-  photoFilePath: '',
-};
-
 const initialState: INewsPortalState = {
   topics: null,
-  user,
+  user: null,
   news: null,
 };
 

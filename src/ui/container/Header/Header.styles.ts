@@ -1,13 +1,22 @@
 import styled from 'styled-components';
 
 const HeaderStyles = styled.div`
+  width: 100%;
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  width: -webkit-fill-available;
-  padding: 10px;
-  
+  flex-direction: column;
+  gap: 10px;
+  .info-panel {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: -webkit-fill-available;
+    padding: 10px;
+  }
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
   .title-portal {
     font-weight: 700;
     border: 1px solid ${({ theme }) => theme.color};

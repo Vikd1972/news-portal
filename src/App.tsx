@@ -1,37 +1,71 @@
-/* eslint-disable no-console */
 import React from 'react';
 import { ThemeProvider } from 'styled-components';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { AxiosError } from 'axios';
+import { ToastContainer } from 'react-toastify';
 
-import Header from './ui/container/Header/Header';
-import NewsList from './pages/NewsList/NewsList';
+import Navigation from './ui/container/Navigations';
 import AppContainer from './App.styles';
 import newsPortalTheme from './newsPortalTheme';
 import { useAppDispatch } from './store/hooks';
-import { setTopics, setNews } from './store/newsPortalSlice';
+import { setTopics, setNews, setUser } from './store/newsPortalSlice';
 import { getTopics, getNewsList } from './api/newsApi';
+import { getMe } from './api/userApi';
+import showToast from './validation/showToast';
 
 function App() {
   const dispatch = useAppDispatch();
+  const [isInit, setIsInit] = React.useState(false);
+
+  React.useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      setIsInit(true);
+      return;
+    }
+    (async () => {
+      try {
+        const result = await getMe();
+        dispatch(setUser(result.user));
+      } catch (err) {
+        if (err instanceof AxiosError) {
+          showToast(err.message);
+        }
+      } finally {
+        setIsInit(true);
+      }
+    })();
+  }, [dispatch]);
 
   React.useEffect(() => {
     (async () => {
-      const topicsrResult = await getTopics();
-      dispatch(setTopics(topicsrResult.data.data));
+      try {
+        const topicsrResult = await getTopics();
+        dispatch(setTopics(topicsrResult.data.data));
 
-      const newsResult = await getNewsList();
-      dispatch(setNews(newsResult.data.data));
-      // console.log('newsResult', newsResult);
+        const newsResult = await getNewsList();
+        dispatch(setNews(newsResult.data.data));
+      } catch (err) {
+        if (err instanceof AxiosError) {
+          showToast(err.message);
+        }
+      }
     })();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dispatch]);
+
+  if (!isInit) {
+    return null;
+  }
 
   return (
     <ThemeProvider theme={newsPortalTheme}>
       <Router>
         <AppContainer>
-          <Header />
-          <NewsList />
+          <Navigation />
+          <ToastContainer
+            className="toast"
+            bodyClassName="toast-body"
+          />
         </AppContainer>
       </Router>
     </ThemeProvider>
