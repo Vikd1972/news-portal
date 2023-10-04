@@ -23,12 +23,25 @@ const HeaderStyles = styled.div`
     border-radius: ${({ theme }) => theme.borderRadius};
     padding: 10px 10px;
   }
-
+  @keyframes blink {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  .new-message-icon {
+    cursor: pointer;
+    animation: blink 1s infinite;
+  }
   .text {
     margin: 0;
     padding: 0;
   }
-
   .date-box {
     display: flex;
     flex-direction: column;
@@ -52,6 +65,17 @@ const HeaderStyles = styled.div`
   .button {
     color: ${({ theme }) => theme.color};
     border-color: ${({ theme }) => theme.color};
+  }
+  .new-message {
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 30px;
+    border-radius: ${({ theme }) => theme.borderRadius};
+    overflow: hidden;
   }
 `;
 

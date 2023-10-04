@@ -8,7 +8,13 @@ const localPath = {
   profile: '/profile',
 };
 
+const baseUrl = 'http://localhost:4000/api';
+
+const socketUrl = 'http://localhost:4000';
+
 export default {
   requiredErrorMessage,
   localPath,
+  baseUrl,
+  socketUrl,
 };

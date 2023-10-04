@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import config from '../config';
+import config from '../utils/constant';
 
 const instance = axios.create({
   baseURL: config.baseUrl,

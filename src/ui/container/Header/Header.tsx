@@ -1,31 +1,59 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { io } from 'socket.io-client';
 
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Button from '@mui/material/Button';
+import FeedbackIcon from '@mui/icons-material/Feedback';
+import dayjs from 'dayjs';
 import HeaderWrapper from './Header.styles';
 import config from '../../../utils/constant';
-import getDate from '../../../utils/getDate';
+import type { IUserType } from '../../../store/newsPortalSlice';
 import { resetCurrentUser } from '../../../store/newsPortalSlice';
 import { useAppSelector, useAppDispatch } from '../../../store/hooks';
+
+const socket = io(config.socketUrl);
+
+type MessageType = {
+  newsId: number;
+  title: string;
+  dateOfChange: Date;
+  user: IUserType;
+};
 
 export const Header: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
   const user = useAppSelector(({ newsPortal }) => newsPortal.user);
+
   const [acteveTab, setActiveTab] = React.useState(1);
-  const [today, setToday] = useState<{ date: string; time: string }>();
+  const [newMessage, setNewMessage] = useState<MessageType | null>(null);
+  const [isReadMessage, setIsReadMessage] = useState(false);
+
+  const isNewMessage = React.useMemo(() => {
+    if (!newMessage) {
+      return false;
+    }
+    return true;
+  }, [newMessage]);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      const { date, time } = getDate(Date.now() / 1000);
-      setToday({ date, time });
-    }, 1000);
-    return () => {
-      clearInterval(timer);
-    };
+    socket.on('changeNews', (...arg) => {
+      setNewMessage(arg[0]);
+    });
+    return () => { socket.removeAllListeners('changeNews'); };
   }, []);
+
+  const toReaMessage = () => {
+    setIsReadMessage(true);
+  };
+
+  const onCloseMessage = () => {
+    setNewMessage(null);
+    setIsReadMessage(false);
+  };
 
   useEffect(() => {
     if (acteveTab === 1) {
@@ -64,10 +92,14 @@ export const Header: React.FC = () => {
           <div className="title-portal">NEWS PORTAL</div>
         </Link>
 
-        <div className="date-box">
-          <p className="text">It&apos;s now {today?.date}</p>
-          <p className="text">{today?.time}</p>
-        </div>
+        {isNewMessage && (
+          <div
+            className="new-message-icon"
+            onClick={toReaMessage}
+          >
+            <FeedbackIcon />
+          </div>
+        )}
 
         {user?.email
           ? (
@@ -95,6 +127,21 @@ export const Header: React.FC = () => {
           <Tab label="Write news" value={2} />
         </Tabs>
       </div>
+
+      {isReadMessage && (
+        <div className="new-message modal-container">
+          <div>
+            {`News with title "${newMessage?.title}" was changed on ${dayjs(newMessage?.dateOfChange).toString()}`}
+          </div>
+          <Button
+            className="button"
+            variant="outlined"
+            onClick={onCloseMessage}
+          >
+            Закрыть
+          </Button>
+        </div>
+      )}
 
     </HeaderWrapper>
   );

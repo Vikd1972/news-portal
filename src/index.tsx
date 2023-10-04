@@ -6,7 +6,7 @@ import { store } from './store/store';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-// import 'react-quill/dist/quill.snow.css';
+import 'react-quill/dist/quill.snow.css';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const root = ReactDOM.createRoot(

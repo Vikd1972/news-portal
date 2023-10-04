@@ -37,11 +37,6 @@ const routes: RouteType[] = [
     requiredIsAuth: false,
     element: Signup,
   },
-  // {
-  //   path: config.localPath.profile,
-  //   element: User,
-  //   requiredIsAuth: true,
-  // },
 ];
 
 const Navigation = () => {

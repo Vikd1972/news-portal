@@ -4,6 +4,7 @@ import DatePicker from 'react-datepicker';
 import { AxiosError } from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import type { MultiValue } from 'react-select';
+import { io } from 'socket.io-client';
 
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
@@ -18,6 +19,8 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setNews, updateNews } from '../../api/newsApi';
 import showToast from '../../validation/showToast';
 import { setCurrentNewsList, type INewsType } from '../../store/newsPortalSlice';
+
+const socket = io(config.socketUrl);
 
 type OptionType ={
   label: string;
@@ -107,6 +110,15 @@ const WriteNews: React.FC = () => {
           if (editedNewsList) {
             dispatch(setCurrentNewsList(editedNewsList));
           }
+
+          const dateOfCange = new Date();
+          const options = {
+            newsid: updatedNews.data.data.newsId,
+            title: updatedNews.data.data.title,
+            dateOfCange,
+            user,
+          };
+          socket.emit('changeNews', options);
         } else {
           const newNews = await setNews(data);
           if (news && newNews.data.data.dateOfPublication < startDate) {
