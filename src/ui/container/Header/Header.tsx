@@ -4,17 +4,17 @@ import { Link, useNavigate } from 'react-router-dom';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Button from '@mui/material/Button';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import HeaderWrapper from './Header.styles';
 import config from '../../../utils/constant';
 import getDate from '../../../utils/getDate';
-import { useAppSelector } from '../../../store/hooks';
+import { resetCurrentUser } from '../../../store/newsPortalSlice';
+import { useAppSelector, useAppDispatch } from '../../../store/hooks';
 
 export const Header: React.FC = () => {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const user = useAppSelector(({ newsPortal }) => newsPortal.user);
   const [acteveTab, setActiveTab] = React.useState(1);
-
   const [today, setToday] = useState<{ date: string; time: string }>();
 
   useEffect(() => {
@@ -32,6 +32,9 @@ export const Header: React.FC = () => {
       navigate(config.localPath.news);
     } else {
       navigate(config.localPath.writeNews);
+      if (!user) {
+        setActiveTab(1);
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [acteveTab]);
@@ -42,6 +45,14 @@ export const Header: React.FC = () => {
 
   const onSignIn = () => {
     navigate(config.localPath.signIn);
+  };
+
+  const onLogout = () => {
+    dispatch(resetCurrentUser());
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('refreshToken');
+    setActiveTab(1);
+    navigate(config.localPath.news);
   };
 
   return (
@@ -60,28 +71,21 @@ export const Header: React.FC = () => {
 
         {user?.email
           ? (
-            <nav className="panel__buttons">
-
-              <Link
-                className="button__icon"
-                to="/profile"
-              >
-                <AccountCircleIcon
-                  className="user-icon"
-                  fontSize="large"
-                />
-              </Link>
-            </nav>
+            <Button
+              className="button"
+              variant="outlined"
+              onClick={onLogout}
+            >
+              Logout
+            </Button>
           ) : (
-            <div>
-              <Button
-                className="button"
-                variant="outlined"
-                onClick={onSignIn}
-              >
-                Sign In
-              </Button>
-            </div>
+            <Button
+              className="button"
+              variant="outlined"
+              onClick={onSignIn}
+            >
+              Sign In
+            </Button>
           )}
       </div>
 

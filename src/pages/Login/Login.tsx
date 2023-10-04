@@ -7,7 +7,7 @@ import { AxiosError } from 'axios';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { signIn } from '../../api/userApi';
-import { setUser } from '../../store/newsPortalSlice';
+import { setCurrentUser } from '../../store/newsPortalSlice';
 import { useAppDispatch } from '../../store/hooks';
 import config from '../../utils/constant';
 import showToast from '../../validation/showToast';
@@ -33,7 +33,7 @@ export const Login: React.FC = () => {
     onSubmit: async (values) => {
       try {
         const result = await signIn(values);
-        dispatch(setUser(result.user));
+        dispatch(setCurrentUser(result.user));
 
         navigate(config.localPath.news);
       } catch (err) {
@@ -48,7 +48,7 @@ export const Login: React.FC = () => {
     <LoginWrapper>
       <div className="login">
         <div className="login__name">
-          <div>Log In /</div>
+          <div>Sign In /</div>
           <Link
             className="login__name-toggle"
             to="/sign-up"

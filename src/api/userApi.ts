@@ -52,8 +52,5 @@ export const getMe = async (): Promise<AuthResponseType> => {
     UserEndpoints.getMe(),
   );
 
-  localStorage.setItem('authToken', result.data.data.tokens.authorization);
-  localStorage.setItem('refreshToken', result.data.data.tokens.refresh);
-
   return result.data.data;
 };

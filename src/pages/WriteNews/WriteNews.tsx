@@ -2,19 +2,22 @@ import React from 'react';
 import { useFormik } from 'formik';
 import DatePicker from 'react-datepicker';
 import { AxiosError } from 'axios';
-import { useNavigate } from 'react-router-dom';
-
-import TextField from '@mui/material/TextField';
+import { useLocation, useNavigate } from 'react-router-dom';
 import type { MultiValue } from 'react-select';
+
+import Modal from '@mui/material/Modal';
+import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import NewsItem from '../NewsItem/NewsItem';
 import Select from '../../ui/component/Select/Select';
 import RichTextBox from '../../ui/component/RichTextBox/RichTextBox';
 import ListWrapper from './WriteNews.styles';
 import newsValidation from '../../validation/newsValidation';
 import config from '../../utils/constant';
-import { useAppSelector } from '../../store/hooks';
-import { setNews } from '../../api/newsApi';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { setNews, updateNews } from '../../api/newsApi';
 import showToast from '../../validation/showToast';
+import { setCurrentNewsList, type INewsType } from '../../store/newsPortalSlice';
 
 type OptionType ={
   label: string;
@@ -22,8 +25,23 @@ type OptionType ={
 };
 
 const WriteNews: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const location = useLocation();
   const navigate = useNavigate();
   const topics = useAppSelector(({ newsPortal }) => newsPortal.topics);
+  const user = useAppSelector(({ newsPortal }) => newsPortal.user);
+  const news = useAppSelector(({ newsPortal }) => newsPortal.news);
+  const [isPreview, setIsPreview] = React.useState(false);
+  const [currentNews, setCurrentNews] = React.useState<INewsType | null>(null);
+  const [isEdit, setIsEdit] = React.useState(false);
+
+  const updatredNews = location.state?.news as INewsType;
+
+  React.useEffect(() => {
+    if (updatredNews) {
+      setIsEdit(true);
+    }
+  }, [updatredNews]);
 
   const topicsOptions = React.useMemo(() => {
     const options: {
@@ -46,11 +64,21 @@ const WriteNews: React.FC = () => {
     dateOfPublication: Date;
   };
 
+  const initialValueRTopics = React.useMemo(() => {
+    if (!updatredNews || !updatredNews.topics) {
+      return [];
+    }
+    return updatredNews.topics.map((topic) => ({
+      label: topic.topic,
+      value: topic.topicId,
+    }));
+  }, [updatredNews]);
+
   const formik = useFormik({
     initialValues: {
-      title: '',
-      content: '',
-      topics: [],
+      title: updatredNews?.title || '',
+      content: updatredNews?.content || '',
+      topics: initialValueRTopics,
       dateOfPublication: new Date(),
     } as InitialValuesType,
     validationSchema: newsValidation,
@@ -63,7 +91,29 @@ const WriteNews: React.FC = () => {
           dateOfPublication: values.dateOfPublication,
         };
 
-        await setNews(data);
+        const startDate = new Date();
+
+        if (isEdit) {
+          const updatedNews = await updateNews(updatredNews.newsId, data);
+          const editedNewsList = news?.map((news) => {
+            if (news.newsId === updatedNews.data.data.newsId) {
+              return {
+                ...news,
+                ...updatedNews.data.data,
+              };
+            }
+            return news;
+          });
+          if (editedNewsList) {
+            dispatch(setCurrentNewsList(editedNewsList));
+          }
+        } else {
+          const newNews = await setNews(data);
+          if (news && newNews.data.data.dateOfPublication < startDate) {
+            const updatedNewsList = [newNews.data.data, ...news];
+            dispatch(setCurrentNewsList(updatedNewsList));
+          }
+        }
 
         navigate(config.localPath.news);
       } catch (err) {
@@ -73,6 +123,25 @@ const WriteNews: React.FC = () => {
       }
     },
   });
+
+  React.useEffect(() => {
+    if (!user) {
+      return;
+    }
+    const topicIds = formik.values.topics.map((topic) => topic.value);
+    const currentTopics = topics?.filter((topic) => topicIds.includes(topic.topicId));
+
+    setCurrentNews({
+      ...currentNews,
+      newsId: Date.now(),
+      title: formik.values.title,
+      content: formik.values.content,
+      topics: currentTopics || [],
+      dateOfPublication: formik.values.dateOfPublication,
+      user,
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formik.values, topics, user]);
 
   const handleSelectChange = (newValue: MultiValue<OptionType>) => {
     formik.setFieldValue('topics', newValue as OptionType[]);
@@ -98,8 +167,12 @@ const WriteNews: React.FC = () => {
     formik.resetForm();
   };
 
-  const toPreview = () => {
-    //
+  const toOpenPreview = () => {
+    setIsPreview(true);
+  };
+
+  const toClosePreview = () => {
+    setIsPreview(false);
   };
 
   return (
@@ -167,7 +240,7 @@ const WriteNews: React.FC = () => {
           <Button
             className="button-item"
             variant="outlined"
-            onClick={toPreview}
+            onClick={toOpenPreview}
           >
             Предпросмотр
           </Button>
@@ -181,6 +254,17 @@ const WriteNews: React.FC = () => {
           </Button>
         </div>
       </form>
+
+      <Modal
+        open={isPreview}
+        onClose={toClosePreview}
+        aria-labelledby="child-modal-title"
+        aria-describedby="child-modal-description"
+      >
+        <div className="modal-container">
+          <NewsItem news={currentNews} />
+        </div>
+      </Modal>
     </ListWrapper>
   );
 };

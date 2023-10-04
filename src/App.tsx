@@ -8,7 +8,7 @@ import Navigation from './ui/container/Navigations';
 import AppContainer from './App.styles';
 import newsPortalTheme from './newsPortalTheme';
 import { useAppDispatch } from './store/hooks';
-import { setTopics, setNews, setUser } from './store/newsPortalSlice';
+import { setCurrentTopics, setCurrentNewsList, setCurrentUser } from './store/newsPortalSlice';
 import { getTopics, getNewsList } from './api/newsApi';
 import { getMe } from './api/userApi';
 import showToast from './validation/showToast';
@@ -26,7 +26,8 @@ function App() {
     (async () => {
       try {
         const result = await getMe();
-        dispatch(setUser(result.user));
+
+        dispatch(setCurrentUser(result.user));
       } catch (err) {
         if (err instanceof AxiosError) {
           showToast(err.message);
@@ -41,10 +42,10 @@ function App() {
     (async () => {
       try {
         const topicsrResult = await getTopics();
-        dispatch(setTopics(topicsrResult.data.data));
+        dispatch(setCurrentTopics(topicsrResult.data.data));
 
         const newsResult = await getNewsList();
-        dispatch(setNews(newsResult.data.data));
+        dispatch(setCurrentNewsList(newsResult.data.data));
       } catch (err) {
         if (err instanceof AxiosError) {
           showToast(err.message);

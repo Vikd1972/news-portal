@@ -8,6 +8,10 @@ class NewsEndpoints {
   static getNewsList = () => '/news';
 
   static setNews = () => '/news';
+
+  static deleteNews = (newsId: number) => `/news/${newsId}?hardDelete=true`;
+
+  static updateNews = (newsId: number) => `/news/${newsId}`;
 }
 
 type TopicsResponseType = {
@@ -22,13 +26,19 @@ export const getTopics = (): Promise<TopicsResponseType> => {
   );
 };
 
-type NewsResponseType = {
+type NewsListResponseType = {
   data: {
     data: INewsType[];
   };
 };
 
-export const getNewsList = (): Promise<NewsResponseType> => {
+type NewsResponseType = {
+  data: {
+    data: INewsType;
+  };
+};
+
+export const getNewsList = (): Promise<NewsListResponseType> => {
   return instance.get(
     NewsEndpoints.getNewsList(),
   );
@@ -44,6 +54,19 @@ type NewsRequesrType = {
 export const setNews = (news: NewsRequesrType): Promise<NewsResponseType> => {
   return instance.post(
     NewsEndpoints.setNews(),
+    news,
+  );
+};
+
+export const deleteNews = (newsId: number): Promise<NewsResponseType> => {
+  return instance.delete(
+    NewsEndpoints.deleteNews(newsId),
+  );
+};
+
+export const updateNews = (newsId: number, news: NewsRequesrType): Promise<NewsResponseType> => {
+  return instance.patch(
+    NewsEndpoints.updateNews(newsId),
     news,
   );
 };

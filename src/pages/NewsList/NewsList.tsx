@@ -1,51 +1,32 @@
 import React from 'react';
-import dayjs from 'dayjs';
 
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import MailOutlineIcon from '@mui/icons-material/MailOutline';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import NewsItem from '../NewsItem/NewsItem';
 import ListWrapper from './NewsList.styles';
-import { useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import 'react-quill/dist/quill.snow.css';
+import { deleteNews } from '../../api/newsApi';
+import { setCurrentNewsList } from '../../store/newsPortalSlice';
 
 const NewsList: React.FC = () => {
+  const dispatch = useAppDispatch();
   const newsList = useAppSelector(({ newsPortal }) => newsPortal.news);
+
+  const deteteNews = async (newsId: number) => {
+    await deleteNews(newsId);
+    if (newsList) {
+      const upddatedNewsList = newsList.filter((news) => news.newsId !== newsId);
+      dispatch(setCurrentNewsList(upddatedNewsList));
+    }
+  };
 
   return (
     <ListWrapper>
       {newsList?.map((news) => (
-        <div
+        <NewsItem
           key={news.newsId}
-          className="item-news"
-        >
-          <div className="personal-info">
-            <AccountCircleIcon />
-            {`${news?.user?.firstName} ${news?.user?.lastName}`}
-          </div>
-
-          <div className="personal-info">
-            <MailOutlineIcon />
-            {news?.user?.email}
-          </div>
-
-          <div className="personal-info">
-            <CalendarMonthIcon />
-            {dayjs(news.dateOfPublication).toString()}
-          </div>
-
-          <div className="personal-info">
-            {news.title.toUpperCase()}
-
-            {news?.topics?.length ? ', Topics:' : null}
-
-            {news?.topics && news.topics.map((topic) => (
-              <div key={topic.topicId}>
-                {topic.topic}
-              </div>
-            ))}
-          </div>
-
-          <div dangerouslySetInnerHTML={{ __html: news.content }} />
-        </div>
+          news={news}
+          deteteNews={deteteNews}
+        />
       ))}
     </ListWrapper>
   );

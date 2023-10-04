@@ -33,6 +33,15 @@ const WriteNewsWrapper = styled.div`
     color: ${({ theme }) => theme.color};
     border-color: ${({ theme }) => theme.color};
   }
+  .modal-container  {
+    position: 'absolute';
+    top: '50%';
+    left: '50%';
+    transform: 'translate(-50%, -50%)';
+    width: 800px;
+    background-color: ${({ theme }) => theme.backrground};
+    border: 2px solid ${({ theme }) => theme.color};
+  }
 `;
 
 export default WriteNewsWrapper;

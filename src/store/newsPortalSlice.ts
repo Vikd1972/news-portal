@@ -8,6 +8,7 @@ export enum StatusENUM {
 }
 
 export interface IUserType {
+  userId: number;
   firstName: string;
   lastName: string;
   email: string;
@@ -44,22 +45,26 @@ export const newsPortalSlice = createSlice({
   name: 'newsPortal',
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<IUserType>) => {
+    setCurrentUser: (state, action: PayloadAction<IUserType>) => {
       state.user = action.payload;
     },
-    setNews: (state, action: PayloadAction<INewsType[]>) => {
+    resetCurrentUser: (state) => {
+      state.user = null;
+    },
+    setCurrentNewsList: (state, action: PayloadAction<INewsType[]>) => {
       state.news = action.payload;
     },
-    setTopics: (state, action: PayloadAction<ITopic[]>) => {
+    setCurrentTopics: (state, action: PayloadAction<ITopic[]>) => {
       state.topics = action.payload;
     },
   },
 });
 
 export const {
-  setUser,
-  setNews,
-  setTopics,
+  setCurrentUser,
+  resetCurrentUser,
+  setCurrentNewsList,
+  setCurrentTopics,
 } = newsPortalSlice.actions;
 
 export default newsPortalSlice.reducer;

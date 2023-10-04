@@ -44,12 +44,10 @@ const RichTextBox = (props: RichTextBoxPropsType) => {
       {props.children}
       <ReactQuill
         value={props.value}
-        // name={props.name}
         onBlur={props.onBlur}
         onChange={changeHandler}
         formats={formats}
         modules={modules}
-        // autoFocus={props.autoFocus}
       />
     </>
   );

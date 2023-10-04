@@ -9,7 +9,7 @@ const ListWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  .item-news {
+  /* .item-news {
     padding: 15px;
     border: 1px solid ${({ theme }) => theme.color};
     border-radius: ${({ theme }) => theme.borderRadius};
@@ -20,7 +20,7 @@ const ListWrapper = styled.div`
     align-items: center;
     gap: 10px;
     font-weight: 700  ;
-  }
+  } */
 `;
 
 export default ListWrapper;
